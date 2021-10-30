@@ -15,7 +15,7 @@ Currently it provides:
 7. Support for database backend (such as NDOUtils)
 8. Contact notifications when service or host problems occur and get resolved (via e-mail, pager, SMS, or any user-defined method through plugin system)
 
-Step 1 — Installing Nagios 4
+!! Step 1 — Installing Nagios 4 !!
 
 ==== Instalasi ====
 
@@ -60,9 +60,7 @@ Step 1 — Installing Nagios 4
 
   # sudo systemctl restart apache2
 
-
-
-Step 2 — Installing Nagios Plugins
+!! Step 2 — Installing Nagios Plugins !!
 
 ==== Instalasi Nagios plugin ====
 
@@ -74,7 +72,216 @@ Step 2 — Installing Nagios Plugins
   
 ==== Configuration And Installation ====
 
-  cd /usr/local/src/nagios-plugins-2.3.3
-  ./configure
-  sudo make
-sudo make install
+   # cd /usr/local/src/nagios-plugins-2.3.3
+   # ./configure
+   # sudo make
+   # sudo make install
+
+!! Step 3 — Installing The Check_NRPE Plugin !!
+
+==== To Look For Libssl-Dev Readiness ====
+
+   # apt -y install apt-file
+   # apt-file update
+   # apt-file search libssl | grep libssl-dev
+   # apt-file search libssl | grep /usr/lib/x86_64-linux-gnu
+   # apt-file search ssl | grep /usr/bin/openssl
+   
+==== Intalasi Libssl-Dev ====
+
+   # apt -y install  libssl-dev
+   
+==== Download Source ====
+
+   # sudo su
+   # cd /usr/local/src
+   # curl -L -O https://github.com/NagiosEnterprises/nrpe/releases/download/nrpe-4.0.3/nrpe-4.0.3.tar.gz
+   # tar zxf nrpe-4.0.3.tar.gz
+   # cd /usr/local/src/nrpe-4.0.3
+   
+==== Configure And Install Check_NRPE Plugin ====
+
+   # sudo su
+   # cd /usr/local/src/nrpe-4.0.3
+   # ./configure --with-ssl=/usr/bin/openssl --with-ssl-lib=/usr/lib/x86_64-linux-gnu
+   # sudo make check_nrpe
+   # sudo make install-plugin
+
+!! Step 4 — Configure Nagios Server !!
+
+==== Edit Nagios.Cfg ====
+
+   # sudo nano /usr/local/nagios/etc/nagios.cfg
+   
+==== Find It In /usr/local/nagios/etc/nagios.cfg ====
+
+   # cfg_dir=/usr/local/nagios/etc/servers
+
+==== Remove # In Front Of Cfg_Dir ====
+
+   # cfg_dir=/usr/local/nagios/etc/servers
+
+==== Buat Directory ====
+
+   # sudo mkdir -p /usr/local/nagios/etc/servers
+
+==== Edit contacts ====
+
+   # sudo nano /usr/local/nagios/etc/objects/contacts.cfg
+
+==== Change Email With Our Email In /usr/local/nagios/etc/objects/contacts.cfg ====
+
+define contact{
+       contact_name nagiosadmin     ; Short name of user
+       use          generic-contact ; Inherit default values from generic-contact template (defined above)
+       alias        Nagios Admin    ; Full name of user
+       email        your_email@your_domain.com  ; <<***** CHANGE THIS TO YOUR EMAIL ADDRESS ******
+}
+
+==== Edit Commands.Cfg ====
+
+   # Sudo nano /usr/local/nagios/etc/objects/commands.cfg
+   
+==== Add It In /usr/local/nagios/etc/objects/commands.cfg ====
+
+   # define command{
+        command_name check_nrpe
+        command_line $USER1$/check_nrpe -H $HOSTADDRESS$ -c $ARG1$
+}
+
+==== Restart Nagios ====
+
+   # sudo systemctl start nagios
+
+!! Step 5 — Akses Nagios Web !!
+
+==== Nagios Access ====
+
+   # http://ip_address/nagios
+   
+==== Login Nagios ====
+
+   # Username = nagiosadmin 
+   # Password = *******
+
+==== To View The Host Being Monitored ====
+
+   # Current Status > Hosts
+   
+!! Step 6 — Installing Nagios Plugin & NRPE Daemon On Monitored Server !!
+
+==== Login Server To Be Monitored ====
+
+   # ssh userserver@ip_address
+   
+==== Create a Nagios User That Will Run The NRPE Agent ====
+
+   # sudo useradd nagios
+   
+==== Instalasi ====
+
+   # sudo apt update
+   # sudo apt -y install autoconf gcc libmcrypt-dev make libssl-dev wget dc build-essential gettext
+
+==== Download Source ====
+
+   # sudo su
+   # cd /usr/local/src
+   # curl -L -O https://nagios-plugins.org/download/nagios-plugins-2.3.3.tar.gz
+   # tar zxf nagios-plugins-2.3.3.tar.gz
+   # cd /usr/local/src/nagios-plugins-2.3.3
+   
+==== Compile & Install ====
+
+   # ./configure
+   # sudo make
+   # sudo make install
+   
+==== Instalasi NRPE Daemon ====
+
+   # cd /usr/local/src
+   # curl -L -O https://github.com/NagiosEnterprises/nrpe/releases/download/nrpe-4.0.3/nrpe-4.0.3.tar.gz
+   # tar zxf nrpe-4.0.3.tar.gz
+   # cd /usr/local/src/nrpe-4.0.3
+   
+==== Configure & Install NRPE ====
+
+   # cd /usr/local/src/nrpe-4.0.3
+   # ./configure
+   # sudo make nrpe
+   # sudo make install-daemon
+   # sudo make install-config
+   # sudo make install-init
+   
+==== Check Harddisk ====
+
+   # df -h /
+   
+==== Edit /usr/local/nagios/etc/nrpe.cfg ====
+
+   # sudo nano /usr/local/nagios/etc/nrpe.cfg
+   
+==== We Need To Define And Change ====
+
+   # server_address=second_ubuntu_server_private_ip
+   # allowed_hosts=127.0.0.1,::1,your_nagios_server_private_ip
+   # command[check_sda2]=/usr/local/nagios/libexec/check_disk -w 20% -c 10% -p /dev/sda2
+   
+==== Start NRPE ====
+
+   # sudo systemctl start nrpe.service
+
+==== Run Status ====
+
+   # sudo systemctl status nrpe.service
+   
+==== Ufw Enable ====
+
+   # ufw enable
+   
+==== Check Communication To Remote NRPE Server From Admin ====
+
+   # /usr/local/nagios/libexec/check_nrpe -H ip_address_server
+
+==== Output ====
+
+   # NRPE v4.0.3
+
+!! Step 7 — Monitoring Hosts With Nagios !!
+
+==== Add Hosts ====
+   
+   # sudo nano /usr/local/nagios/etc/servers/your_monitored_server_host_name.cfg
+
+==== Edit file /usr/local/nagios/etc/servers/your_monitored_server_host_name.cfg ====
+
+   # define host {
+        use                             linux-server
+        host_name                       ip_address_client
+        alias                           My client server
+        address                         ip_address_client
+        max_check_attempts              5
+        check_period                    24x7
+        notification_interval           30
+        notification_period             24x7
+}
+
+   # define service {
+        use                             generic-service
+        host_name                       ip_address_client
+        service_description             Load average
+        check_command                   check_nrpe!check_load
+}
+
+   # define service {
+        use                             generic-service
+        host_name                       ip_address_client
+        service_description             /dev/sda2 free space
+        check_command                   check_nrpe!check_sda2
+}
+
+==== Restart Nagios ====
+
+   # sudo systemctl restart nagios
+   
+THANK YOU VERY MUCH :)
