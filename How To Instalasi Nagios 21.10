@@ -1,0 +1,80 @@
+Nagios is a popular open-source monitoring system. Nagios maintains an inventory of your servers and monitors them so you know your critical services are up and 
+running. and Nagios keeps an eye on the hosts and services assigned to them, alerts them when things get worse, and notifies when things get better.
+
+Nagios Core is open source software licensed under the GNU GPL V2.
+
+Currently it provides:
+
+1. Monitoring of network services (SMTP, POP3, HTTP, NNTP, ICMP, SNMP, FTP, SSH)
+2. Monitoring of host resources (processor load, disk usage, system logs) on a majority of network operating systems, including Microsoft Windows, 
+   using monitoring agents.
+3. Monitoring of any hardware (like probes for temperature, alarms, etc.) which have the ability to send collected data via a network to specifically written plugins
+4. Remote monitoring supported through SSH or SSL encrypted tunnels.
+5. A web-interface for viewing current network status, notifications, problem history, log files, etc.
+6. Support for implementing performance data graphing
+7. Support for database backend (such as NDOUtils)
+8. Contact notifications when service or host problems occur and get resolved (via e-mail, pager, SMS, or any user-defined method through plugin system)
+
+Step 1 — Installing Nagios 4
+
+==== Instalasi ====
+
+  # sudo apt update
+  # sudo apt -y install autoconf gcc libc6 make wget unzip apache2 php libapache2-mod-php libgd-dev
+
+==== Download Source ====
+
+  # cd /usr/local/src/
+  # wget -O nagioscore.tar.gz https://github.com/NagiosEnterprises/nagioscore/archive/nagios-4.4.6.tar.gz
+  # tar xzf nagioscore.tar.gz
+  # cd /usr/local/src/nagioscore-nagios-4.4.6/
+  
+==== Run script & specify Apache config directory ====
+
+  # sudo su
+  # cd /usr/local/src/nagioscore-nagios-4.4.6/
+  # sudo ./configure --with-httpd-conf=/etc/apache2/sites-enabled
+  
+==== Added --with-mail=/usr/sbin/sendmail Compile & Install Nagios ====
+
+  # cd /usr/local/src/nagioscore-nagios-4.4.6/
+  # sudo make all
+  # sudo make install-groups-users
+  # sudo make install
+  # sudo make install-daemoninit
+  # sudo make install-commandmode
+  # sudo make install-config
+
+==== Apache Configuration ====
+
+  # sudo make install-webconf
+  # sudo a2enmod rewrite
+  # sudo a2enmod cgi
+  # sudo usermod -a -G nagios www-data
+  
+==== Configure & Enter PASSWORD For User Nagiosadmin ====
+
+  # sudo htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin
+  
+==== Restart Apache ====
+
+  # sudo systemctl restart apache2
+
+
+
+Step 2 — Installing Nagios Plugins
+
+==== Instalasi Nagios plugin ====
+
+  # sudo su
+  # cd /usr/local/src
+  # curl -L -O https://nagios-plugins.org/download/nagios-plugins-2.3.3.tar.gz
+  # tar zxf nagios-plugins-2.3.3.tar.gz
+  # cd /usr/local/src/nagios-plugins-2.3.3
+  
+==== Configuration And Installation ====
+
+  cd /usr/local/src/nagios-plugins-2.3.3
+  ./configure
+  sudo make
+sudo make install
