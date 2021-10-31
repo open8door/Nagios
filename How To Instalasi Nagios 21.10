@@ -121,7 +121,7 @@ Currently it provides:
 
    # cfg_dir=/usr/local/nagios/etc/servers
 
-==== Buat Directory ====
+==== Create Directory ====
 
    # sudo mkdir -p /usr/local/nagios/etc/servers
 
@@ -140,7 +140,7 @@ define contact{
 
 ==== Edit Commands.Cfg ====
 
-   # Sudo nano /usr/local/nagios/etc/objects/commands.cfg
+   # sudo nano /usr/local/nagios/etc/objects/commands.cfg
    
 ==== Add It In /usr/local/nagios/etc/objects/commands.cfg ====
 
