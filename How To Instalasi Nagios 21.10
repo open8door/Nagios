@@ -56,13 +56,13 @@ Currently it provides:
 
   # sudo htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin
   
-==== Restart Apache ====
+==== Run Restart Apache ====
 
   # sudo systemctl restart apache2
 
 !! Step 2 — Installing Nagios Plugins !!
 
-==== Instalasi Nagios plugin ====
+==== Download Source ====
 
   # sudo su
   # cd /usr/local/src
@@ -149,20 +149,20 @@ define contact{
         command_line $USER1$/check_nrpe -H $HOSTADDRESS$ -c $ARG1$
 }
 
-==== Restart Nagios ====
+==== Run Restart Nagios ====
 
    # sudo systemctl start nagios
 
 !! Step 5 — Akses Nagios Web !!
 
-==== Nagios Access ====
+==== Nagios Access Browser ====
 
    # http://ip_address/nagios
    
 ==== Login Nagios ====
 
    # Username = nagiosadmin 
-   # Password = *******
+   # Password = ****
 
 ==== To View The Host Being Monitored ====
 
@@ -197,7 +197,7 @@ define contact{
    # sudo make
    # sudo make install
    
-==== Instalasi NRPE Daemon ====
+==== Download Source ====
 
    # cd /usr/local/src
    # curl -L -O https://github.com/NagiosEnterprises/nrpe/releases/download/nrpe-4.0.3/nrpe-4.0.3.tar.gz
@@ -227,13 +227,17 @@ define contact{
    # allowed_hosts=127.0.0.1,::1,your_nagios_server_private_ip
    # command[check_sda2]=/usr/local/nagios/libexec/check_disk -w 20% -c 10% -p /dev/sda2
    
-==== Start NRPE ====
+==== Run Start Nrpe ====
 
    # sudo systemctl start nrpe.service
 
-==== Run Status ====
+==== Run Status Nrpe ====
 
    # sudo systemctl status nrpe.service
+   
+==== Create Port Ufw ====
+
+   # sudo ufw allow port/tcp
    
 ==== Ufw Enable ====
 
@@ -241,7 +245,7 @@ define contact{
    
 ==== Check Communication To Remote NRPE Server From Admin ====
 
-   # /usr/local/nagios/libexec/check_nrpe -H ip_address_server
+   # /usr/local/nagios/libexec/check_nrpe -H ip_address
 
 ==== Output ====
 
@@ -251,7 +255,7 @@ define contact{
 
 ==== Add Hosts ====
    
-   # sudo nano /usr/local/nagios/etc/servers/your_monitored_server_host_name.cfg
+   # sudo nano /usr/local/nagios/etc/servers/ip_address.cfg
 
 ==== Edit file /usr/local/nagios/etc/servers/your_monitored_server_host_name.cfg ====
 
