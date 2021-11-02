@@ -17,7 +17,7 @@ Currently it provides:
 
 !! Step 1 — Installing Nagios 4 !!
 
-==== Instalasi ====
+==== Instalasi Nagios Server ====
 
   # sudo apt update
   # sudo apt -y install autoconf gcc libc6 make wget unzip apache2 php libapache2-mod-php libgd-dev
@@ -178,7 +178,7 @@ define contact{
 
    # sudo useradd nagios
    
-==== Instalasi ====
+==== Instalasi Nagios Client ====
 
    # sudo apt update
    # sudo apt -y install autoconf gcc libmcrypt-dev make libssl-dev wget dc build-essential gettext
@@ -242,6 +242,7 @@ define contact{
 ==== Ufw Enable ====
 
    # ufw enable
+   # ufw status
    
 ==== Check Communication To Remote NRPE Server From Admin ====
 
@@ -253,7 +254,7 @@ define contact{
 
 !! Step 7 — Monitoring Hosts With Nagios !!
 
-==== Add Hosts ====
+==== Add Hosts Nagios Client ====
    
    # sudo nano /usr/local/nagios/etc/servers/ip_address.cfg
 
